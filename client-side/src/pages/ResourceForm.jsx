@@ -29,7 +29,7 @@ export default function ResourceForm() {
     }).catch((error) => active && setLoadError(error))
     return () => { active = false }
   }, [id, isEdit])
-  return <><PageHeader eyebrow="Dashboard" title={isEdit ? 'Edit resource' : 'New resource'} subtitle={isEdit ? 'Update the details of this resource.' : 'Submit a new resource to Cryoverse.'} /><section className="section"><div className="container">{loadError && <Alert variant="danger" title="Couldn't load this resource">{loadError.message}</Alert>}{!loadError && !initialValues && <div className="page-loading"><Spinner label="Loading resource" /></div>}{initialValues && <Fields id={id} isEdit={isEdit} initialValues={initialValues} onDone={() => navigate('/dashboard')} />}</div></section></>
+  return <><PageHeader eyebrow="Dashboard" title={isEdit ? 'Edit resource' : 'New resource'} subtitle={isEdit ? 'Update the details of this resource.' : 'Submit a new resource to Pumpkin.'} /><section className="section"><div className="container">{loadError && <Alert variant="danger" title="Couldn't load this resource">{loadError.message}</Alert>}{!loadError && !initialValues && <div className="page-loading"><Spinner label="Loading resource" /></div>}{initialValues && <Fields id={id} isEdit={isEdit} initialValues={initialValues} onDone={() => navigate('/dashboard')} />}</div></section></>
 }
 
 function Fields({ id, isEdit, initialValues, onDone }) {
