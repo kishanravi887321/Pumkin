@@ -28,7 +28,7 @@ export default function Dashboard() {
   }
 
   return <>
-    <PageHeader eyebrow="Dashboard" title={user?.name ? `Welcome, ${user.name}` : 'Your resources'} subtitle="Manage the resources you've submitted to Cryoverse." />
+    <PageHeader eyebrow="Dashboard" title={user?.name ? `Welcome, ${user.name}` : 'Your resources'} subtitle="Manage the resources you've submitted to Pumpkin." />
     <section className="section"><div className="container">
       <div className="dashboard-toolbar"><Button to="/dashboard/new">New resource</Button></div>
       {error && <Alert variant="danger" title="Couldn't load your resources">{error.message}</Alert>}
