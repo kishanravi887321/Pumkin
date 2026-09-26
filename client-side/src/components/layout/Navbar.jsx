@@ -14,22 +14,22 @@ export default function Navbar() {
   const { isAuthenticated, logout } = useAuth()
   const [open, setOpen] = useState(false)
   const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('cryoverse-theme')
+    const saved = localStorage.getItem('pumpkin-theme')
     return saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
   })
   const close = () => setOpen(false)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    localStorage.setItem('cryoverse-theme', theme)
+    localStorage.setItem('pumpkin-theme', theme)
   }, [theme])
 
   return (
     <header className="navbar">
       <div className="container navbar__inner">
         <Link to="/" className="navbar__brand" onClick={close}>
-          <span className="navbar__logo" aria-hidden="true">CV</span>
-          <span>Cryoverse <small>POLAR ARCHIVE</small></span>
+          <span className="navbar__logo" aria-hidden="true">P</span>
+          <span>Pumpkin <small>POLAR ARCHIVE</small></span>
         </Link>
 
         <button
