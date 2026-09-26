@@ -41,7 +41,7 @@ export default function Home() {
       </div>
 
       <section className="earth-section">
-        <div className="field-index">CRYOVERSE / FIELD JOURNAL <span>01—05</span></div>
+        <div className="field-index">PUMPKIN / FIELD JOURNAL <span>01—05</span></div>
         <div className="earth-section__copy">
           <span className="field-kicker">Polar science / public archive</span>
           <h1>The ice<br /><em>remembers.</em></h1>
