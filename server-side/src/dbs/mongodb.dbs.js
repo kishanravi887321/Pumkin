@@ -1,24 +1,22 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-//  check the db URl is configured or not 
 
-let dbUrl=process.env.MONGO_URL;
-
-// console.log("dbUrl",dbUrl);
-
+dotenv.config();
 
 async function connectToMongoDB() {
+  const dbUrl = process.env.MONGO_URL;
+
   if (!dbUrl) {
     console.error('MongoDB URL is not configured. Please set the MONGO_URL environment variable.');
     return;
   }
+
   try {
-    const connection = await mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(dbUrl);
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-  } 
-  mongoose.connect(dbUrl);
+  }
 }
 
 export default connectToMongoDB;
