@@ -31,7 +31,7 @@ export default function Login() {
       <div className="auth-panel">
         <div className="auth-header">
           <h1>Log in</h1>
-          <p>Access your Cryoverse account.</p>
+          <p>Access your Pumpkin account.</p>
         </div>
 
         <Card>
@@ -63,7 +63,7 @@ export default function Login() {
         </Card>
 
         <p className="auth-switch">
-          New to Cryoverse? <Link to="/register">Create an account</Link>
+          New to Pumpkin? <Link to="/register">Create an account</Link>
         </p>
       </div>
     </div>

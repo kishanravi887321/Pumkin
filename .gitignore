@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+client-side/node_modules/
+server-side/node_modules/
+
+# local environment files
+.env
+.env.*
+client-side/.env
+client-side/.env.*
+server-side/.env
+server-side/.env.*

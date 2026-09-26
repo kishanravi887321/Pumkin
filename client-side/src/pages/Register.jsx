@@ -41,7 +41,7 @@ export default function Register() {
       <div className="auth-panel">
         <div className="auth-header">
           <h1>Create an account</h1>
-          <p>Join Cryoverse to contribute and manage polar-science resources.</p>
+          <p>Join Pumpkin to contribute and manage polar-science resources.</p>
         </div>
 
         <Card>
