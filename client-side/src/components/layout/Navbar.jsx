@@ -4,7 +4,7 @@ import { Button } from '../ui'
 import { useAuth } from '../../context/AuthContext.jsx'
 
 // Public navigation only. Auth-aware items (dashboard, logout) arrive with Iteration 2.
-const NAV_LINKS = [
+const PUBLIC_NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/repository', label: 'Repository' },
   { to: '/expeditions', label: 'Expeditions' },
@@ -12,6 +12,9 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth()
+  const navLinks = isAuthenticated
+    ? [{ to: '/', label: 'Home', end: true }, { to: '/dashboard', label: 'Dashboard' }, { to: '/expeditions', label: 'Expeditions' }]
+    : PUBLIC_NAV_LINKS
   const [open, setOpen] = useState(false)
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('pumpkin-theme')
@@ -45,7 +48,7 @@ export default function Navbar() {
 
         <nav id="primary-nav" className={`navbar__nav${open ? ' navbar__nav--open' : ''}`} aria-label="Primary">
           <ul className="navbar__links">
-            {NAV_LINKS.map(({ to, label, end }) => (
+            {navLinks.map(({ to, label, end }) => (
               <li key={to}>
                 <NavLink to={to} end={end} className="navbar__link" onClick={close}>
                   {label}
