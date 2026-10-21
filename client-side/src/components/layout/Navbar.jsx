@@ -3,18 +3,16 @@ import { Link, NavLink } from 'react-router-dom'
 import { Button } from '../ui'
 import { useAuth } from '../../context/AuthContext.jsx'
 
-// Public navigation only. Auth-aware items (dashboard, logout) arrive with Iteration 2.
+// Keep the workspace dashboard visible in the primary navigation.
 const PUBLIC_NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
-  { to: '/repository', label: 'Repository' },
+  { to: '/dashboard', label: 'Dashboard' },
   { to: '/expeditions', label: 'Expeditions' },
 ]
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth()
-  const navLinks = isAuthenticated
-    ? [{ to: '/', label: 'Home', end: true }, { to: '/dashboard', label: 'Dashboard' }, { to: '/expeditions', label: 'Expeditions' }]
-    : PUBLIC_NAV_LINKS
+  const navLinks = PUBLIC_NAV_LINKS
   const [open, setOpen] = useState(false)
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('pumpkin-theme')
