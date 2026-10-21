@@ -23,8 +23,8 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="repository/:id" element={<RepositoryDetail />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="dashboard" element={<Dashboard />} />
           <Route path="dashboard/new" element={<ResourceForm />} />
           <Route path="dashboard/:id/edit" element={<ResourceForm />} />
         </Route>
