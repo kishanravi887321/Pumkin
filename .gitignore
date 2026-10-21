@@ -1,12 +1,44 @@
-# dependencies
+# Dependencies
 node_modules/
-client-side/node_modules/
-server-side/node_modules/
 
-# local environment files
+# Frontend build output and local tooling
+client-side/dist/
+client-side/dist-ssr/
+client-side/.vite/
+client-side/*.local
+
+# Go build output and generated test/profiling files
+server-side/bin/
+server-side/dist/
+server-side/*.exe
+server-side/*.test
+server-side/*.out
+server-side/coverage/
+server-side/.cache/
+
+# Local environment files (example files remain trackable)
 .env
-.env.*
+.env.local
+.env.*.local
 client-side/.env
-client-side/.env.*
+client-side/.env.*.local
 server-side/.env
-server-side/.env.*
+server-side/.env.*.local
+!.env.example
+!client-side/.env.example
+!server-side/.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor and operating-system files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.sw?
