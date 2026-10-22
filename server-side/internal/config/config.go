@@ -10,9 +10,9 @@ type Config struct {
 
 func Load() Config {
 	return Config{
-		Port:        valueOrDefault("PORT", "8080"),
-		Environment: valueOrDefault("APP_ENV", "development"),
-		DatabaseURL: os.Getenv("DATABASE_URL"),
+		Port:        GetPort(),
+		Environment: Getenvironment(),
+		DatabaseURL: Dburl(),
 	}
 }
 
