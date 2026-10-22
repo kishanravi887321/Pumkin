@@ -16,6 +16,9 @@ server-side/*.test
 server-side/*.out
 server-side/coverage/
 server-side/.cache/
+server-side/tmp/
+server-side/.air.toml
+server-side/.envrc
 
 # Local environment files (example files remain trackable)
 .env
