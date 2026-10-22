@@ -10,6 +10,7 @@ client-side/*.local
 # Go build output and generated test/profiling files
 server-side/bin/
 server-side/dist/
+server-side/app
 server-side/*.exe
 server-side/*.test
 server-side/*.out
