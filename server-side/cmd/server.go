@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kishanravi887321/pumkin/server-side/internal/config"
 	"github.com/kishanravi887321/pumkin/server-side/internal/dbs"
-	"github.com/kishanravi887321/pumkin/server-side/internal/handlers"
 	"github.com/kishanravi887321/pumkin/server-side/internal/middleware"
 	"github.com/kishanravi887321/pumkin/server-side/internal/routes"
 )
@@ -21,6 +20,7 @@ func Run() error {
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.New()
+	router.Use(gin.Logger())
 
 	// Keep panic recovery and your custom CORS middleware.
 	router.Use(gin.Recovery(), middleware.CORS())
@@ -30,7 +30,8 @@ func Run() error {
 		return err
 	}
 
-	routes.Register(router, handlers.NewHealthHandler(cfg))
+	routes.UserRouter(router)
+
 	log.Println("Server is listening at :", cfg.Port)
 
 	return router.Run(fmt.Sprintf(":%s", cfg.Port))
