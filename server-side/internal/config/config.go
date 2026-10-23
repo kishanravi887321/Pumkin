@@ -9,10 +9,26 @@ type Config struct {
 }
 
 func Load() Config {
+	dburl, err := Dburl()
+	if err != nil {
+		return Config{}
+	}
+	port, err := GetPort()
+
+	if err != nil {
+		return Config{}
+	}
+
+	environment, err := Getenvironment()
+
+	if err != nil {
+		return Config{}
+	}
+
 	return Config{
-		Port:        GetPort(),
-		Environment: Getenvironment(),
-		DatabaseURL: Dburl(),
+		Port:        port,
+		Environment: environment,
+		DatabaseURL: dburl,
 	}
 }
 
