@@ -28,6 +28,18 @@ func Dburl() (string, error) {
 
 }
 
+func NeonDburl() (string, error) {
+
+	url := os.Getenv("NEON__DB__URL")
+
+	if url == "" {
+		log.Println("error occurred while reading the Neon database URL")
+		return "", errors.New("NEON__DB__URL is not configured")
+	}
+
+	return url, nil
+}
+
 func GetPort() (string, error) {
 
 	port := os.Getenv("PORT")
