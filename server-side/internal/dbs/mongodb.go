@@ -3,6 +3,7 @@ package dbs
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/kishanravi887321/pumkin/server-side/internal/config"
@@ -12,15 +13,10 @@ import (
 
 func ConnectMongoDb() {
 
-	url := config.Dburl()
+	url, err := config.Dburl()
 
 	client, err := mongo.Connect(options.Client().ApplyURI(url))
 
-	if err != nil {
-
-		fmt.Println("some error occured durign Mongo Connection")
-
-	}
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		10*time.Second,
@@ -29,8 +25,9 @@ func ConnectMongoDb() {
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		fmt.Println("MongoDB connection failed:", err)
-		return
+
+		log.Fatal("MongoDB connection failed:", err)
+
 	}
 
 	fmt.Println("MongoDB connected successfully!")
