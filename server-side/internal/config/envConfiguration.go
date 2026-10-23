@@ -1,7 +1,9 @@
 package config
 
 import (
+	"errors"
 	"log"
+
 	// "log"
 	"os"
 )
@@ -9,25 +11,39 @@ import (
 //  get the data form the .env file
 // and return from this file
 
-func Dburl() string {
+func Dburl() (string, error) {
 
 	url := os.Getenv("MONGO__DB__URL")
 
 	if url == "" {
-		log.Fatal("eror occured while readign the databse url")
+
+		log.Println("eror occured while readign the databse url")
+		return "", errors.New("MONGO__DB__URL is not configured")
 	}
 
 	// fmt.Println(url)
 
-	return url
+	return url, nil
 
 }
 
-func GetPort() string {
+func GetPort() (string, error) {
 
-	return os.Getenv("PORT")
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		return "", errors.New("Port is not configured")
+	}
+
+	return port, nil
+
 }
 
-func Getenvironment() string {
-	return os.Getenv("ENV")
+func Getenvironment() (string, error) {
+	env := os.Getenv("ENV")
+
+	if env == "" {
+		return "", errors.New("Env is not configured")
+	}
+	return env, nil
 }
