@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"log"
+	"time"
 
 	// "log"
 	"os"
@@ -46,4 +47,44 @@ func Getenvironment() (string, error) {
 		return "", errors.New("Env is not configured")
 	}
 	return env, nil
+}
+
+func GetAccessTokenSecret() (string, error) {
+	secret := os.Getenv("ACCESS__TOKEN__SECRET")
+	if secret == "" {
+		return "", errors.New("ACCESS__TOKEN__SECRET is not configured")
+	}
+	return secret, nil
+}
+
+func GetRefreshTokenSecret() (string, error) {
+	secret := os.Getenv("REFRESH__TOKEN__SECRET")
+	if secret == "" {
+		return "", errors.New("REFRESH__TOKEN__SECRET is not configured")
+	}
+	return secret, nil
+}
+
+func GetAccessTokenExpiry() (time.Duration, error) {
+	expiry := os.Getenv("ACCESS__TOKEN__EXPIRY")
+	if expiry == "" {
+		return 0, errors.New("ACCESS__TOKEN__EXPIRY is not configured")
+	}
+	duration, err := time.ParseDuration(expiry)
+	if err != nil {
+		return 0, errors.New("ACCESS__TOKEN__EXPIRY is not a valid duration")
+	}
+	return duration, nil
+}
+
+func GetRefreshTokenExpiry() (time.Duration, error) {
+	expiry := os.Getenv("REFRESH__TOKEN__EXPIRY")
+	if expiry == "" {
+		return 0, errors.New("REFRESH__TOKEN__EXPIRY is not configured")
+	}
+	duration, err := time.ParseDuration(expiry)
+	if err != nil {
+		return 0, errors.New("REFRESH__TOKEN__EXPIRY is not a valid duration")
+	}
+	return duration, nil
 }
