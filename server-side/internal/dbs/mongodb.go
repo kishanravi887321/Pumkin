@@ -3,7 +3,6 @@ package dbs
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/kishanravi887321/pumkin/server-side/internal/config"
@@ -11,11 +10,16 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func ConnectMongoDb() {
-
+func ConnectMongoDb() (*mongo.Client, error) {
 	url, err := config.Dburl()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get MongoDB URL: %w", err)
+	}
 
 	client, err := mongo.Connect(options.Client().ApplyURI(url))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create MongoDB client: %w", err)
+	}
 
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
@@ -23,12 +27,11 @@ func ConnectMongoDb() {
 	)
 	defer cancel()
 
-	err = client.Ping(ctx, nil)
-	if err != nil {
-
-		log.Fatal("MongoDB connection failed:", err)
-
+	if err := client.Ping(ctx, nil); err != nil {
+		_ = client.Disconnect(context.Background())
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 
 	fmt.Println("MongoDB connected successfully!")
+	return client, nil
 }
