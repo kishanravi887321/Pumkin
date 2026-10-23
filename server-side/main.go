@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
+	err := godotenv.Overload()
 	if err != nil {
 		log.Println(".env file not found; using system environment variables")
 	} else {
-		log.Println(".env is loaded ......")
+		log.Println(".env is loaded and environment values were refreshed")
 	}
 
 	err = cmd.Run()

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -14,7 +15,19 @@ import (
 func Run() error {
 	cfg := config.Load()
 
-	dbs.ConnectMongoDb()
+	mongoClient, err := dbs.ConnectMongoDb()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = mongoClient.Disconnect(context.Background())
+	}()
+
+	postgresDB, err := dbs.ConnectPostgres()
+	if err != nil {
+		return err
+	}
+	defer postgresDB.Close()
 
 	// Disable Gin debug and route registration logs.
 	gin.SetMode(gin.ReleaseMode)
