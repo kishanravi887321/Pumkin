@@ -40,19 +40,26 @@ async def server_secret(
     x_internal_token: str | None = Header(default=None),
 ) -> dict[str, str]:
     caller_host = request.client.host if request.client else None
-    if (
-        not is_allowed_ip(caller_host)
-        or not PRIVATE_SERVER_AUTH_TOKEN
-        or not x_internal_token
-        or not hmac.compare_digest(x_internal_token, PRIVATE_SERVER_AUTH_TOKEN)
-    ):
-        logger.warning("Rejected /server-secret request from IP %s", caller_host or "unknown")
+    caller_ip = caller_host or "unknown"
+    ip_allowed = is_allowed_ip(caller_host)
+    token_valid = (
+        bool(PRIVATE_SERVER_AUTH_TOKEN)
+        and bool(x_internal_token)
+        and hmac.compare_digest(x_internal_token, PRIVATE_SERVER_AUTH_TOKEN)
+    )
+
+    if not ip_allowed:
+        logger.warning("UNVERIFIED /server-secret request from non-whitelisted IP %s", caller_ip)
+    elif not token_valid:
+        logger.warning("UNVERIFIED /server-secret request from whitelisted IP %s: invalid token", caller_ip)
+
+    if not ip_allowed or not token_valid:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the authorized local service may access this route",
         )
 
-    logger.info("Accepted /server-secret request from IP %s", caller_host)
+    logger.info("VERIFIED /server-secret request from whitelisted IP %s", caller_ip)
     return {
         "message": "Server secret retrieved successfully",
         "key": SERVER_SECRET,
