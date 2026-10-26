@@ -97,10 +97,10 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		// Step 6: Store validated claims in Gin's context.
 		// Protected handlers can retrieve these values using c.Get().
-		c.Set("user_id", userID)
+		c.Set("userId", userID)
 
 		if username, ok := claims["username"].(string); ok {
-			c.Set("username", username)
+			c.Set("userName", username)
 		}
 
 		if email, ok := claims["email"].(string); ok {
