@@ -7,17 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kishanravi887321/pumkin/server-side/dto"
+	"github.com/kishanravi887321/pumkin/server-side/requests"
 	"github.com/kishanravi887321/pumkin/server-side/utils"
 )
 
-type UserRequest struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
 func RegisterUser(c *gin.Context) {
-	var user UserRequest
+	var user requests.UserRegisterRequest
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
