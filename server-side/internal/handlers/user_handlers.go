@@ -104,7 +104,8 @@ func GetMe(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message":       "hello Ravi kishan....",
-		"decryptedText": decryptedText,
+		"message":                 "hello Ravi kishan....",
+		"decryptedText":           decryptedText,
+		"secretFromPrivateServer": response,
 	})
 }
