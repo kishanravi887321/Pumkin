@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/kishanravi887321/pumkin/server-side/internal/config"
@@ -16,10 +15,11 @@ type PrivateServerResponse struct {
 }
 
 func CallPrivateServer() (string, error) {
-	url, err := config.GetPrivateServerURL()
+	cfg, err := config.Load()
 	if err != nil {
 		return "", err
 	}
+	url := cfg.PrivateServerURL
 
 	// Use a timeout so the request cannot hang indefinitely.
 	client := &http.Client{
@@ -31,7 +31,7 @@ func CallPrivateServer() (string, error) {
 		return "", fmt.Errorf("create private server request: %w", err)
 	}
 
-	authToken := os.Getenv("PRIVATE_SERVER_AUTH_TOKEN")
+	authToken := cfg.PrivateServerAuthToken
 	if authToken == "" {
 		return "", fmt.Errorf("PRIVATE_SERVER_AUTH_TOKEN is not configured")
 	}
