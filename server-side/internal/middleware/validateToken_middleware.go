@@ -40,7 +40,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenString := parts[1]
 
 		// Step 3: Get the secret used to sign access tokens.
-		secret, err := config.GetAccessTokenSecret()
+		cfg, err := config.Load()
 		if err != nil {
 			// A configuration error is a server error,
 			// not an invalid-token error.
@@ -49,6 +49,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			})
 			return
 		}
+		secret := cfg.AccessTokenSecret
 
 		// Step 4: Parse and validate the JWT.
 		// jwt.Parse checks the signature and registered claims,

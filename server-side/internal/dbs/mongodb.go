@@ -11,10 +11,11 @@ import (
 )
 
 func ConnectMongoDb() (*mongo.Client, error) {
-	url, err := config.Dburl()
+	cfg, err := config.Load()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get MongoDB URL: %w", err)
+		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
+	url := cfg.DatabaseURL
 
 	client, err := mongo.Connect(options.Client().ApplyURI(url))
 	if err != nil {
