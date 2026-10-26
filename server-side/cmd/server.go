@@ -13,7 +13,12 @@ import (
 )
 
 func Run() error {
-	cfg := config.Load()
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("load configuration: %w", err)
+	}
+
+	fmt.Println("Server is starting in", cfg.Environment, "mode...")
 
 	mongoClient, err := dbs.ConnectMongoDb()
 	if err != nil {

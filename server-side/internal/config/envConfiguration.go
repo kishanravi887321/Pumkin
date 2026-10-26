@@ -1,120 +1,56 @@
 package config
 
 import (
-	"errors"
-	"log"
-	"time"
-
-	// "log"
+	"fmt"
 	"os"
+	"time"
 )
 
-//  get the data form the .env file
-// and return from this file
+func GetConfigValue(
+	environment string,
+	envKey string,
+	secretName string,
+	version string,
+) (string, error) {
+	switch environment {
+	case "development":
+		value := os.Getenv(envKey)
+		if value == "" {
+			return "", fmt.Errorf("%s is not configured", envKey)
+		}
+		return value, nil
 
-func Dburl() (string, error) {
+	case "production":
+		return GetSecret(secretName, version)
 
-	url := os.Getenv("MONGO__DB__URL")
-
-	if url == "" {
-
-		log.Println("eror occured while readign the databse url")
-		return "", errors.New("MONGO__DB__URL is not configured")
+	default:
+		return "", fmt.Errorf(
+			"unsupported environment: %q",
+			environment,
+		)
 	}
-
-	// fmt.Println(url)
-
-	return url, nil
-
-}
-
-func NeonDburl() (string, error) {
-
-	url := os.Getenv("NEON__DB__URL")
-
-	if url == "" {
-		log.Println("error occurred while reading the Neon database URL")
-		return "", errors.New("NEON__DB__URL is not configured")
-	}
-
-	return url, nil
 }
 
 func GetPort() (string, error) {
-
 	port := os.Getenv("PORT")
-
 	if port == "" {
-		return "", errors.New("Port is not configured")
+		return "", fmt.Errorf("PORT is not configured")
 	}
-
 	return port, nil
-
-}
-
-func Getenvironment() (string, error) {
-	env := os.Getenv("ENV")
-
-	if env == "" {
-		return "", errors.New("Env is not configured")
-	}
-	return env, nil
 }
 
 func GetAccessTokenSecret() (string, error) {
-	secret := os.Getenv("ACCESS__TOKEN__SECRET")
-	if secret == "" {
-		return "", errors.New("ACCESS__TOKEN__SECRET is not configured")
-	}
-	return secret, nil
+	return GetConfigValue(os.Getenv("ENV"), "ACCESS__TOKEN__SECRET", "ACCESS__TOKEN__SECRET", "latest")
 }
 
-func GetRefreshTokenSecret() (string, error) {
-	secret := os.Getenv("REFRESH__TOKEN__SECRET")
-	if secret == "" {
-		return "", errors.New("REFRESH__TOKEN__SECRET is not configured")
-	}
-	return secret, nil
+func GetPrivateServerURL() (string, error) {
+	return GetConfigValue(os.Getenv("ENV"), "PRIVATE__SERVER__URL", "PRIVATE__SERVER__URL", "latest")
 }
 
 func GetAccessTokenExpiry() (time.Duration, error) {
-	expiry := os.Getenv("ACCESS__TOKEN__EXPIRY")
-	if expiry == "" {
-		return 0, errors.New("ACCESS__TOKEN__EXPIRY is not configured")
-	}
-	duration, err := time.ParseDuration(expiry)
+	value, err := GetConfigValue(os.Getenv("ENV"), "ACCESS__TOKEN__EXPIRY", "ACCESS__TOKEN__EXPIRY", "latest")
 	if err != nil {
-		return 0, errors.New("ACCESS__TOKEN__EXPIRY is not a valid duration")
+		return 0, err
 	}
-	return duration, nil
-}
-
-func GetRefreshTokenExpiry() (time.Duration, error) {
-	expiry := os.Getenv("REFRESH__TOKEN__EXPIRY")
-	if expiry == "" {
-		return 0, errors.New("REFRESH__TOKEN__EXPIRY is not configured")
-	}
-	duration, err := time.ParseDuration(expiry)
-	if err != nil {
-		return 0, errors.New("REFRESH__TOKEN__EXPIRY is not a valid duration")
-	}
-	return duration, nil
-}
-
-func GetEncryptionKey() (string, error) {
-	key := os.Getenv("MASTER__KEY")
-	if key == "" {
-		return "", errors.New("MASTER__KEY is not configured")
-	}
-
-	return key, nil
-}
-func GetPrivateServerURL() (string, error) {
-	url := os.Getenv("PRIVATE__SERVER__URL")
-
-	if url == "" {
-		log.Println("error occurred while reading the private server URL")
-		return "", errors.New("PRIVATE__SERVER__URL is not configured")
-	}
-	return url, nil
+	return time.ParseDuration(value)
 }
