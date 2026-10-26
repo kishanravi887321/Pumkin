@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,9 +19,9 @@ func RegisterUser(c *gin.Context) {
 		})
 		return
 	}
+	utils.CleanInput(&user)
 
-	log.Println("Username:", user.Username)
-	log.Println("Email:", user.Email)
+	fmt.Print(user.Username, user.Email)
 
 	// Never print passwords in logs.
 
@@ -32,8 +31,8 @@ func RegisterUser(c *gin.Context) {
 		Email:    user.Email,
 	}
 
-	accessToken, err := utils.GenerateAccessToken(userClaims)
-	fmt.Println("Access Token:", accessToken) // For demonstration; remove in production.
+	_, err := utils.GenerateAccessToken(userClaims)
+	// fmt.Println("Access Token:", accessToken) // For demonstration; remove in production.
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
