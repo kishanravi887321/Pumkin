@@ -9,16 +9,12 @@ import (
 )
 
 func GenerateAccessToken(userClaims dto.TokenClaims) (string, error) {
-
-	secret, err := config.GetAccessTokenSecret()
+	cfg, err := config.Load()
 	if err != nil {
 		return "", err
 	}
-
-	expiry, err := config.GetAccessTokenExpiry()
-	if err != nil {
-		return "", err
-	}
+	secret := cfg.AccessTokenSecret
+	expiry := cfg.AccessTokenExpiry
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":  userClaims.UserID,
