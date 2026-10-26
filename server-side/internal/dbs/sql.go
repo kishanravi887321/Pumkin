@@ -15,10 +15,11 @@ import (
 
 func ConnectPostgres() (*sql.DB, error) {
 
-	url, err := config.NeonDburl()
+	cfg, err := config.Load()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get Neon database URL: %w", err)
+		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
+	url := cfg.NeonDBURL
 	if url == "" {
 		return nil, fmt.Errorf("NEON__DB__URL is not configured")
 	}
