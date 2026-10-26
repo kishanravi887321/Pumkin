@@ -109,3 +109,12 @@ func GetEncryptionKey() (string, error) {
 
 	return key, nil
 }
+func GetPrivateServerURL() (string, error) {
+	url := os.Getenv("PRIVATE__SERVER__URL")
+
+	if url == "" {
+		log.Println("error occurred while reading the private server URL")
+		return "", errors.New("PRIVATE__SERVER__URL is not configured")
+	}
+	return url, nil
+}
