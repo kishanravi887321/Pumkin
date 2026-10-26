@@ -100,3 +100,12 @@ func GetRefreshTokenExpiry() (time.Duration, error) {
 	}
 	return duration, nil
 }
+
+func GetEncryptionKey() (string, error) {
+	key := os.Getenv("MASTER__KEY")
+	if key == "" {
+		return "", errors.New("MASTER__KEY is not configured")
+	}
+
+	return key, nil
+}
