@@ -31,7 +31,7 @@ func RegisterUser(c *gin.Context) {
 		Email:    user.Email,
 	}
 
-	_, err := utils.GenerateAccessToken(userClaims)
+	accessToken, err := utils.GenerateAccessToken(userClaims)
 	// fmt.Println("Access Token:", accessToken) // For demonstration; remove in production.
 
 	if err != nil {
@@ -42,7 +42,8 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User data received successfully",
+		"message":     "User data received successfully",
+		"accessToken": accessToken,
 	})
 }
 
