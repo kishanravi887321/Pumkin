@@ -1,5 +1,6 @@
 import os
 import hmac
+import logging
 from ipaddress import ip_address
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from fastapi import FastAPI, Header, HTTPException, Request, status
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 app = FastAPI(title="Private Server", version="1.0.0")
+logger = logging.getLogger("private-server")
 
 PRIVATE_SERVER_AUTH_TOKEN = os.getenv("PRIVATE_SERVER_AUTH_TOKEN", "")
 SERVER_SECRET = os.getenv("SERVER_SECRET", "")
@@ -44,11 +46,13 @@ async def server_secret(
         or not x_internal_token
         or not hmac.compare_digest(x_internal_token, PRIVATE_SERVER_AUTH_TOKEN)
     ):
+        logger.warning("Rejected /server-secret request from IP %s", caller_host or "unknown")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the authorized local service may access this route",
         )
 
+    logger.info("Accepted /server-secret request from IP %s", caller_host)
     return {
         "message": "Server secret retrieved successfully",
         "key": SERVER_SECRET,
