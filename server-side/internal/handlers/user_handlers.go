@@ -53,7 +53,7 @@ func RegisterUser(c *gin.Context) {
 func GetMe(c *gin.Context) {
 
 	////
-	key, err := config.GetEncryptionKey()
+	cfg, err := config.Load()
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -61,8 +61,9 @@ func GetMe(c *gin.Context) {
 		})
 		return
 	}
+	key := cfg.EncryptionKey
 
-	encryptedText, err := puzru.Encrypt("postgresql://neondb_owner:npg_ZbsXM1uRahJ2@ep-winter-resonance-az3jo11s-pooler.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require", []byte(key))
+	encryptedText, err := puzru.Encrypt("sdvnlkasdnv", []byte(key))
 
 	fmt.Println("Encrypted Text size :", len(encryptedText))
 	if err != nil {
