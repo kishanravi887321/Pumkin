@@ -8,12 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kishanravi887321/pumkin/server-side/dto"
 	"github.com/kishanravi887321/pumkin/server-side/internal/config"
+	"github.com/kishanravi887321/pumkin/server-side/internal/services"
 	"github.com/kishanravi887321/pumkin/server-side/puzru"
 	"github.com/kishanravi887321/pumkin/server-side/requests"
 	"github.com/kishanravi887321/pumkin/server-side/utils"
+	"google.golang.org/api/idtoken"
 )
 
-func RegisterUser(c *gin.Context) {
+type UserHandler struct {
+	userService *services.UserService
+}
+
+func NewUserHandler(userService *services.UserService) *UserHandler {
+	return &UserHandler{userService: userService}
+}
+
+func (h *UserHandler) RegisterUser(c *gin.Context) {
 	var user requests.UserRegisterRequest
 
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -24,14 +34,20 @@ func RegisterUser(c *gin.Context) {
 	}
 	utils.CleanInput(&user)
 
-	fmt.Print(user.Username, user.Email)
-
-	// Never print passwords in logs.
-
-	userClaims := dto.TokenClaims{
-		UserID:   "12345", // Replace with the actual ID from your database.
+	createdUser, err := h.userService.Register(c.Request.Context(), dto.RegisterUserRequest{
 		Username: user.Username,
 		Email:    user.Email,
+		Password: user.Password,
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userClaims := dto.TokenClaims{
+		UserID:   createdUser.UserId,
+		Username: createdUser.UserName,
+		Email:    createdUser.Email,
 	}
 
 	accessToken, err := utils.GenerateAccessToken(userClaims)
@@ -39,21 +55,72 @@ func RegisterUser(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to generate access token",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message":     "user registered successfully",
+		"user":        createdUser,
+		"accessToken": accessToken,
+	})
+}
+
+func LoginByGoogle(c *gin.Context) {
+	var loginRequest requests.UserLoginByGoogleRequest
+
+	cfg, err := config.Load()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Authentication configuration error",
+		})
+		return
+	}
+	googleClientID := cfg.GoogleClientID
+
+	if err := c.ShouldBindJSON(&loginRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
+	// fmt.Println("Received Google Token:", loginRequest.GoogleToken)
+
+	payload, err := idtoken.Validate(
+		c.Request.Context(),
+		loginRequest.GoogleToken,
+		googleClientID,
+	)
+	data := payload.Claims
+	fmt.Println("Google Token Payload:", data["email"], data["name"], data["picture"])
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid Google ID token",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "User data received successfully",
-		"accessToken": accessToken,
+		"message": "Google login successful",
+		"payload": payload,
 	})
+
 }
 
 func GetMe(c *gin.Context) {
 
 	////
 	cfg, err := config.Load()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to load configuration",
+		})
+		return
+	}
+
+	puzru.MakeKey()
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -61,7 +128,7 @@ func GetMe(c *gin.Context) {
 		})
 		return
 	}
-	key := cfg.EncryptionKey
+	key := cfg.MasterEncryptionKey
 
 	encryptedText, err := puzru.Encrypt("sdvnlkasdnv", []byte(key))
 
