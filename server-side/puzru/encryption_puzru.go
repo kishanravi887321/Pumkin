@@ -10,6 +10,12 @@ import (
 )
 
 // Encrypt encrypts plaintext using your 32-byte AES-256 key.
+// Encryption and Key Length Configuration:
+//
+// 1. User Encryption Key:         10 characters
+// 2. Private Server Auth Key:     12 characters
+// 3. Master Encryption Key:       10 characters
+
 func Encrypt(plaintext string, key []byte) (string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {

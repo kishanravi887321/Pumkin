@@ -56,6 +56,7 @@ func CallPrivateServer() (string, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return "", fmt.Errorf("decode private server response: %w", err)
 	}
+	fmt.Println("Private server response:", result.Key)
 
 	return result.Key, nil
 }
