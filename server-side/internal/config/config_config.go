@@ -10,12 +10,13 @@ type Config struct {
 	Port                   string
 	Environment            string
 	DatabaseURL            string
+	MongoDatabaseName      string
 	NeonDBURL              string
 	AccessTokenSecret      string
 	RefreshTokenSecret     string
 	AccessTokenExpiry      time.Duration
 	RefreshTokenExpiry     time.Duration
-	EncryptionKey          string
+	MasterEncryptionKey    string
 	PrivateServerURL       string
 	PrivateServerAuthToken string
 	GoogleClientID         string
@@ -62,6 +63,16 @@ func Load() (Config, error) {
 		environment,
 		"MONGO__DB__URL",
 		"MONGO__DB__URL",
+		"latest",
+	)
+	if err != nil {
+		return Config{}, err
+	}
+
+	mongoDatabaseName, err := GetConfigValue(
+		environment,
+		"MONGO__DATABASE__NAME",
+		"MONGO__DATABASE__NAME",
 		"latest",
 	)
 	if err != nil {
@@ -162,12 +173,13 @@ func Load() (Config, error) {
 		Port:                   port,
 		Environment:            environment,
 		DatabaseURL:            databaseURL,
+		MongoDatabaseName:      mongoDatabaseName,
 		NeonDBURL:              neonDBURL,
 		AccessTokenSecret:      accessTokenSecret,
 		RefreshTokenSecret:     refreshTokenSecret,
 		AccessTokenExpiry:      accessExpiry,
 		RefreshTokenExpiry:     refreshExpiry,
-		EncryptionKey:          masterKey,
+		MasterEncryptionKey:    masterKey,
 		PrivateServerURL:       privateServerURL,
 		PrivateServerAuthToken: privateServerAuthToken,
 		GoogleClientID:         googleClientID,
