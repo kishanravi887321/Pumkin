@@ -1,7 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Alert, Button, Card, Input, PasswordInput } from '../components/ui'
 import useForm from '../hooks/useForm.js'
-import { login } from '../services/authService.js'
+import { login, loginWithGoogle } from '../services/authService.js'
 import { compactErrors, validateEmail, validateRequiredPassword } from '../utils/validation.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
@@ -16,6 +17,55 @@ export default function Login() {
   const { setUser } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const googleButtonRef = useRef(null)
+  const [googleError, setGoogleError] = useState('')
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+
+  useEffect(() => {
+    if (!googleClientId || !googleButtonRef.current) return undefined
+
+    const renderGoogleButton = () => {
+      if (!window.google?.accounts?.id || !googleButtonRef.current) return
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: async ({ credential }) => {
+          try {
+            setGoogleError('')
+            const user = await loginWithGoogle(credential)
+            setUser(user)
+            navigate(location.state?.from?.pathname || '/dashboard', { replace: true })
+          } catch (error) {
+            setGoogleError(error.message || 'Google login failed. Please try again.')
+          }
+        },
+      })
+      googleButtonRef.current.replaceChildren()
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: 'outline',
+        size: 'large',
+        width: 360,
+        text: 'signin_with',
+      })
+    }
+
+    if (window.google?.accounts?.id) {
+      renderGoogleButton()
+      return undefined
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.onload = renderGoogleButton
+    script.onerror = () => setGoogleError('Unable to load Google login.')
+    document.head.appendChild(script)
+
+    return () => {
+      script.onload = null
+      script.onerror = null
+    }
+  }, [googleClientId, location.state, navigate, setUser])
+
   const { submitting, submitError, handleSubmit, getFieldProps } = useForm({
     initialValues: { email: '', password: '' },
     validate,
@@ -41,6 +91,7 @@ export default function Login() {
                 {submitError.message || 'Something went wrong. Please try again.'}
               </Alert>
             )}
+            {googleError && <Alert variant="danger">{googleError}</Alert>}
 
             <Input
               label="Email"
@@ -60,6 +111,17 @@ export default function Login() {
               {submitting ? 'Logging in…' : 'Log in'}
             </Button>
           </form>
+
+          {googleClientId ? (
+            <div className="google-login">
+              <span className="google-login__divider">or</span>
+              <div ref={googleButtonRef} />
+            </div>
+          ) : (
+            <Alert variant="info">
+              Google login is not configured. Add VITE_GOOGLE_CLIENT_ID to client-side/.env.
+            </Alert>
+          )}
         </Card>
 
         <p className="auth-switch">
