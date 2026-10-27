@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/kishanravi887321/pumkin/server-side/internal/app"
 	"github.com/kishanravi887321/pumkin/server-side/internal/config"
 	"github.com/kishanravi887321/pumkin/server-side/internal/dbs"
-	"github.com/kishanravi887321/pumkin/server-side/internal/middleware"
-	"github.com/kishanravi887321/pumkin/server-side/internal/routes"
 )
 
 func Run() error {
@@ -34,21 +32,11 @@ func Run() error {
 	}
 	defer postgresDB.Close()
 
-	// Disable Gin debug and route registration logs.
-	gin.SetMode(gin.ReleaseMode)
+	router, err := app.NewRouter(cfg, mongoClient)
 
-	router := gin.New()
-	router.Use(gin.Logger())
-
-	// Keep panic recovery and your custom CORS middleware.
-	router.Use(gin.Recovery(), middleware.CORS())
-
-	// Don't trust forwarded IP headers from unspecified proxies.
-	if err := router.SetTrustedProxies(nil); err != nil {
+	if err != nil {
 		return err
 	}
-
-	routes.UserRouter(router)
 
 	log.Println("Server is listening at :", cfg.Port)
 
