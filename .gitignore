@@ -19,6 +19,8 @@ server-side/.cache/
 server-side/tmp/
 server-side/.air.toml
 server-side/.envrc
+cutter_go/.env
+cutter_go/tmp/
 
 # Local environment files (example files remain trackable)
 .env
