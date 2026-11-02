@@ -1,4 +1,4 @@
-package main
+package cuttergo
 
 import (
 	"context"
@@ -19,7 +19,19 @@ const (
 	downloadTimeout = 30 * time.Minute
 )
 
-func main() {
+func Handler(response http.ResponseWriter, request *http.Request) {
+	if strings.HasSuffix(request.URL.Path, "/health") {
+		healthHandler(response, request)
+		return
+	}
+	if strings.HasSuffix(request.URL.Path, "/mp3") {
+		mp3Handler(response, request)
+		return
+	}
+	http.NotFound(response, request)
+}
+
+func Run() error {
 	address := os.Getenv("CUTTER_GO_ADDRESS")
 	if address == "" {
 		address = defaultAddress
@@ -36,9 +48,7 @@ func main() {
 	}
 
 	log.Printf("cutter_go listening at %s", address)
-	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatal(err)
-	}
+	return server.ListenAndServe()
 }
 
 func healthHandler(response http.ResponseWriter, _ *http.Request) {
@@ -160,6 +170,17 @@ func findMP3(workdir string) (string, error) {
 }
 
 func findExecutable(names ...string) (string, error) {
+	for _, key := range []string{"YTDLP_PATH", "FFMPEG_PATH"} {
+		if value := os.Getenv(key); value != "" {
+			for _, name := range names {
+				if strings.EqualFold(filepath.Base(value), name) {
+					if _, err := os.Stat(value); err == nil {
+						return value, nil
+					}
+				}
+			}
+		}
+	}
 	for _, name := range names {
 		if path, err := exec.LookPath(name); err == nil {
 			return path, nil
